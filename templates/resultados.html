@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resultados - BIG FIVE</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resultados.css') }}">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>BIG FIVE</h1>
+
+    <p class="descripcion">
+        Informe personalizado de personalidad
+    </p>
+
+</header>
+
+<div class="contenedor">
+
+
+    <section class="card">
+
+        <h2>Datos del usuario</h2>
+
+        <p><strong>Nombre:</strong> {{ nombre }}</p>
+
+        <p><strong>Correo:</strong> {{ correo }}</p>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>Resultados obtenidos</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Rasgo</th>
+                    <th>Puntaje</th>
+                    <th>Nivel</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Apertura a la experiencia</td>
+                    <td>{{ apertura }}</td>
+                    <td>{{ apertura_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Responsabilidad</td>
+                    <td>{{ responsabilidad }}</td>
+                    <td>{{ responsabilidad_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Extraversión</td>
+                    <td>{{ extroversion }}</td>
+                    <td>{{ extroversion_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Amabilidad</td>
+                    <td>{{ amabilidad }}</td>
+                    <td>{{ amabilidad_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Neuroticismo</td>
+                    <td>{{ neuroticismo }}</td>
+                    <td>{{ neuroticismo_txt }}</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>Informe personalizado</h2>
+
+        <p id="informe">
+
+            {{ informe }}
+
+        </p>
+
+    </section>
+    
+    <section class="card">
+      <h2>⭐ Rasgo predominante</h2>
+      <h3 id="rasgoDominante"></h3>
+      <p id="descripcionDominante"></p>
+    </section>
+
+    <section class="card">
+
+        <h2>Perfil Big Five</h2>
+
+        <canvas id="graficoBigFive"></canvas>
+
+    </section>
+
+
+    <div class="botones">
+
+        <button onclick="window.location.href='/'">
+
+            ⬅ Volver al cuestionario
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const datosBigFive = {
+
+    apertura: {{ apertura }},
+    responsabilidad: {{ responsabilidad }},
+    extroversion: {{ extroversion }},
+    amabilidad: {{ amabilidad }},
+    neuroticismo: {{ neuroticismo }}
+
+};
+
+</script>
+
+<script src="{{ url_for('static', filename='js/resultados.js') }}"></script>
+
+</body>
+
+</html>
