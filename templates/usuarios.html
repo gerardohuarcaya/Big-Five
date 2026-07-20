@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Usuarios registrados - BIG FIVE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/usuarios.css') }}">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>BIG FIVE</h1>
+
+    <p class="descripcion">
+        Historial de usuarios registrados
+    </p>
+
+</header>
+
+<div class="contenedor">
+
+    <section class="card">
+
+        <h2>Usuarios registrados</h2>
+
+        <p>
+            Total de usuarios almacenados:
+            <strong>{{ usuarios|length }}</strong>
+        </p>
+
+    </section>
+
+    <section class="card">
+
+        <h2>Buscar usuario</h2>
+
+        <input
+            type="text"
+            id="buscar"
+            placeholder="Buscar por nombre o correo..."
+        >
+
+    </section>
+
+    <section class="card">
+
+        <h2>Listado de usuarios</h2>
+
+        <table id="tablaUsuarios">
+
+            <thead>
+
+                <tr>
+
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Perfil</th>
+                    <th>Promedio</th>
+                    <th>Rasgo dominante</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for usuario in usuarios %}
+
+                <tr>
+
+                    <td>{{ usuario.nombre }}</td>
+
+                    <td>{{ usuario.correo }}</td>
+
+                    <td>{{ usuario.perfil }}</td>
+
+                    <td>{{ usuario.promedio }}</td>
+
+                    <td>{{ usuario.rasgo_dominante }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <div class="botones">
+
+        <button onclick="window.location.href='/'">
+            🔄 Nuevo cuestionario
+        </button>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/usuarios.js') }}"></script>
+
+</body>
+
+</html>

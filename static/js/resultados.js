@@ -48,9 +48,6 @@ for (let rasgo in rasgos) {
 console.log("Rasgo dominante:", rasgoDominante);
 console.log("Puntaje:", mayor);
 
-document.getElementById("rasgoDominante").textContent =
-    `${rasgoDominante} (${mayor}/5)`;
-
 const ctx = document.getElementById("graficoBigFive");
 
 if (ctx) {

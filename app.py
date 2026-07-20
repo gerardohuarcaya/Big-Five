@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from openai import OpenAI
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,6 +9,103 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
+
+usuarios = []
+
+class Pila:
+
+    def __init__(self):
+        self.items=[]
+
+    def apilar(self,item):
+        self.items.append(item)
+
+    def desapilar(self):
+        if self.items:
+            return self.items.pop()
+
+    def mostrar(self):
+        return self.items
+
+class Cola:
+
+    def __init__(self):
+        self.items=[]
+
+    def encolar(self,item):
+        self.items.append(item)
+
+    def desencolar(self):
+        if self.items:
+            return self.items.pop(0)
+
+    def mostrar(self):
+        return self.items
+    
+class Nodo:
+
+    def __init__(self,dato):
+        self.dato=dato
+        self.siguiente=None
+
+
+class ListaEnlazada:
+
+    def __init__(self):
+        self.cabeza=None
+
+    def agregar(self,dato):
+
+        nuevo=Nodo(dato)
+
+        if self.cabeza is None:
+            self.cabeza=nuevo
+            return
+
+        actual=self.cabeza
+
+        while actual.siguiente:
+            actual=actual.siguiente
+
+        actual.siguiente=nuevo
+
+    def mostrar(self):
+
+        datos=[]
+
+        actual=self.cabeza
+
+        while actual:
+
+            datos.append(actual.dato)
+
+            actual=actual.siguiente
+
+        return datos
+
+def clasificar_perfil(apertura,responsabilidad,extroversion,neuroticismo):
+
+    if responsabilidad>=4:
+
+        if extroversion>=4:
+            return "Líder"
+
+        elif apertura>=4:
+            return "Innovador"
+
+        else:
+            return "Organizado"
+
+    else:
+
+        if apertura>=4:
+            return "Creativo"
+
+        elif neuroticismo>=4:
+            return "Emocional"
+
+        else:
+            return "Equilibrado"
 
 def interpretar(valor):
     niveles = {
@@ -36,6 +134,63 @@ def resultados():
         amabilidad = int(request.form.get('p4', 3))
         neuroticismo = int(request.form.get('p5', 3))
 
+        respuestas = [
+            apertura,
+            responsabilidad,
+            extroversion,
+            amabilidad,
+            neuroticismo
+        ]
+            
+        promedio = round(sum(respuestas) / len(respuestas), 2)
+        mayor = max(respuestas)
+        menor = min(respuestas)
+        
+        rasgos = {
+            "Apertura": apertura,
+            "Responsabilidad": responsabilidad,
+            "Extroversión": extroversion,
+            "Amabilidad": amabilidad,
+            "Neuroticismo": neuroticismo
+        }
+        
+        ranking = sorted(
+            rasgos.items(),
+            key=lambda x: x[1],
+            reverse=True
+        )
+        
+        pila=Pila()
+        
+        for dato in ranking:
+            pila.apilar(dato)
+            
+        ultimo_rasgo=pila.desapilar()
+
+        cola=Cola()
+        
+        cola.encolar(nombre)
+        cola.encolar(correo)
+        
+        cola_actual=cola.mostrar()
+
+        historial=ListaEnlazada()
+        
+        for respuesta in respuestas:
+            historial.agregar(respuesta)
+            
+        historial_respuestas=historial.mostrar()
+
+        perfil = clasificar_perfil(
+            apertura,
+            responsabilidad,
+            extroversion,
+            neuroticismo
+            
+        )
+
+        rasgo_dominante = ranking[0][0]
+        puntaje_dominante = ranking[0][1]
 
         informe = ""
 
@@ -85,43 +240,123 @@ def resultados():
         else:   
             informe += "• Generalmente mantienes la calma y afrontas las dificultades con estabilidad emocional.\n\n"
             
+        
         respuesta_ia = client.responses.create(
             model="gpt-5.4-mini",
             input=f"""
-            Eres un psicólogo experto en psicometría y el modelo Big Five.
-            Tu tarea es transformar el siguiente informe en un análisis profesional,
-            claro, humano y motivador.
-            No cambies el significado, solo mejora la redacción.
-            
-            INFORME:
-            {informe}
-            """
+        Eres un psicólogo experto en el modelo Big Five.
+        
+        Analiza los siguientes resultados y redacta un informe profesional.
+        
+        Nombre: {nombre}
+        
+        Resultados:
+        - Apertura: {apertura}/5
+        - Responsabilidad: {responsabilidad}/5
+        - Extroversión: {extroversion}/5
+        - Amabilidad: {amabilidad}/5
+        - Neuroticismo: {neuroticismo}/5
+        
+        Rasgo dominante:
+        {rasgo_dominante} ({puntaje_dominante}/5)
+        
+        Perfil calculado por el sistema:
+        {perfil}
+        
+        Promedio:
+        {promedio}
+        
+        Informe base:
+        {informe}
+        
+        Genera un informe motivador de aproximadamente 250 palabras.
+        """
         )
             
         informe = respuesta_ia.output_text
+
+        nuevo_usuario = {
+            "nombre": nombre,
+            "correo": correo,
+            "apertura": apertura,
+            "responsabilidad": responsabilidad,
+            "extroversion": extroversion,
+            "amabilidad": amabilidad,
+            "neuroticismo": neuroticismo,
+            "perfil": perfil,
+            "promedio": promedio,
+            "rasgo_dominante": rasgo_dominante,
+            "puntaje_dominante": puntaje_dominante,
+            "informe": informe
+        }
+        
+        try:
+            with open("usuarios.json", "r", encoding="utf-8") as archivo:
+                usuarios = json.load(archivo)
+        except:
+            usuarios = []
             
+        usuarios.append(nuevo_usuario)
+        
+        with open("usuarios.json", "w", encoding="utf-8") as archivo:
+            json.dump(
+                usuarios,
+                archivo,
+                indent=4,
+                ensure_ascii=False
+            ) 
+        
         return render_template(
-            'resultados.html',
-                
+            
+            "resultados.html",
+            
             nombre=nombre,
             correo=correo,
-                
+            
             apertura=apertura,
             responsabilidad=responsabilidad,
             extroversion=extroversion,
             amabilidad=amabilidad,
             neuroticismo=neuroticismo,
-                
+            
             apertura_txt=interpretar(apertura),
             responsabilidad_txt=interpretar(responsabilidad),
             extroversion_txt=interpretar(extroversion),
             amabilidad_txt=interpretar(amabilidad),
             neuroticismo_txt=interpretar(neuroticismo),
-                
-            informe=informe
-                
+            
+            informe=informe,
+            promedio=promedio,
+            mayor=mayor,
+            menor=menor,
+            
+            perfil=perfil,
+            
+            rasgo_dominante=rasgo_dominante,
+            puntaje_dominante=puntaje_dominante,
+            
+            ranking=ranking,
+            
+            ultimo_rasgo=ultimo_rasgo,
+            cola_actual=cola_actual,
+            historial_respuestas=historial_respuestas
+            
         )
-
+        
+@app.route('/usuarios')
+def ver_usuarios():
+    
+    try:
+        with open("usuarios.json", "r", encoding="utf-8") as archivo:
+            usuarios = json.load(archivo)
+                    
+    except:
+        usuarios = []
+            
+    return render_template(
+        "usuarios.html",
+        usuarios=usuarios
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
