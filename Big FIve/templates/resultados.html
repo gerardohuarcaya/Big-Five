@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resultados - BIG FIVE</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resultados.css') }}">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>BIG FIVE</h1>
+
+    <p class="descripcion">
+        Informe personalizado de personalidad
+    </p>
+
+</header>
+
+<div class="contenedor">
+
+
+    <section class="card">
+
+        <h2>Datos del usuario</h2>
+
+        <p><strong>Nombre:</strong> {{ nombre }}</p>
+
+        <p><strong>Correo:</strong> {{ correo }}</p>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>Resultados obtenidos</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Rasgo</th>
+                    <th>Puntaje</th>
+                    <th>Nivel</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Apertura a la experiencia</td>
+                    <td>{{ apertura }}</td>
+                    <td>{{ apertura_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Responsabilidad</td>
+                    <td>{{ responsabilidad }}</td>
+                    <td>{{ responsabilidad_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Extraversión</td>
+                    <td>{{ extroversion }}</td>
+                    <td>{{ extroversion_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Amabilidad</td>
+                    <td>{{ amabilidad }}</td>
+                    <td>{{ amabilidad_txt }}</td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Neuroticismo</td>
+                    <td>{{ neuroticismo }}</td>
+                    <td>{{ neuroticismo_txt }}</td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <section class="card">
+        <h2>Resumen estadístico</h2>
+        <p><strong>Promedio general:</strong> {{ promedio }}</p>
+        <p><strong>Mayor puntuación:</strong> {{ mayor }}</p>
+        <p><strong>Menor puntuación:</strong> {{ menor }}</p>
+        <p><strong>Perfil identificado:</strong> {{ perfil }}</p>
+    </section>
+
+    <section class="card">
+
+        <h2>Informe personalizado</h2>
+
+        <p id="informe">
+
+            {{ informe }}
+
+        </p>
+
+    </section>
+    
+    <section class="card">
+        <h2>⭐ Rasgo predominante</h2>
+        <h3>{{ rasgo_dominante }}</h3>
+        <p>
+            Es el rasgo con mayor puntuación,
+            obteniendo un valor de
+            
+            <strong>{{ puntaje_dominante }}/5</strong>.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2>Ranking de rasgos</h2>
+        <ol>
+            {% for rasgo, puntaje in ranking %}
+            <li>
+                <strong>{{ rasgo }}</strong>
+                - {{ puntaje }}/5
+            </li>
+            {% endfor %}
+        </ol>
+    </section>
+
+   <section class="card">
+       <h2>Pila (LIFO)</h2>
+       <p>
+       La pila almacena los rasgos en orden. Al aplicar la operación
+       <strong>desapilar()</strong>, se obtiene el último elemento ingresado.
+       </p>
+    
+       <p>
+       <strong>Último elemento extraído:</strong>
+       {{ ultimo_rasgo[0] }} ({{ ultimo_rasgo[1] }}/5)
+       </p>
+   </section>
+
+   <section class="card">
+       <h2>Cola (FIFO)</h2>
+       <p>
+        La cola almacena la información siguiendo el principio
+        <strong>Primero en entrar, primero en salir (FIFO)</strong>.
+       </p>
+
+       <ul>
+
+        {% for dato in cola_actual %}
+
+        <li>{{ dato }}</li>
+
+        {% endfor %}
+
+       </ul>
+    </section>
+
+    <section class="card">
+        <h2>Lista enlazada</h2>
+        <p>
+            Cada respuesta del cuestionario se almacenó en un nodo de una
+            lista enlazada, permitiendo recorrer secuencialmente todos los
+            valores ingresados por el usuario.
+        </p>
+        
+        <ol>
+            {% for respuesta in historial_respuestas %}
+
+            <li>Nodo → {{ respuesta }}</li>
+
+            {% endfor %}
+        </ol>
+    </section>
+    
+    <section class="card">
+        <h2>Perfil Big Five</h2>
+        <p>
+            El siguiente gráfico representa visualmente el nivel obtenido
+            en cada uno de los cinco rasgos principales de personalidad.
+        </p>
+        <canvas id="graficoBigFive"></canvas>
+    </section>
+
+    <section class="card">
+        <h2>Conclusión general</h2>
+        <p>
+            De acuerdo con los resultados obtenidos, tu perfil predominante es
+            <strong>{{ perfil }}</strong>.
+        </p>
+        
+        <p>
+            El rasgo que más destaca en tu personalidad es
+            <strong>{{ rasgo_dominante }}</strong>
+            con una puntuación de
+            <strong>{{ puntaje_dominante }}/5</strong>.
+        </p>
+        
+        <p>
+            Tu promedio general fue
+            <strong>{{ promedio }}</strong>,
+            lo que representa una visión global de tu personalidad según el modelo Big Five.
+        </p>
+    </section>
+
+
+    <div class="botones">
+        <button onclick="imprimir()">
+            🖨Imprimir archivo
+        </button>
+        
+        <button onclick="window.location.href='/'">
+            🔄 Nuevo cuestionario
+        </button>
+
+        <button onclick="window.location.href='/usuarios'">
+            👥 Ver usuarios registrados
+        </button>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const datosBigFive = {
+
+    apertura: {{ apertura }},
+    responsabilidad: {{ responsabilidad }},
+    extroversion: {{ extroversion }},
+    amabilidad: {{ amabilidad }},
+    neuroticismo: {{ neuroticismo }}
+
+};
+
+</script>
+
+<script src="{{ url_for('static', filename='js/resultados.js') }}"></script>
+
+<footer>
+    <p>
+        © 2026 BIG FIVE · Sistema de evaluación de personalidad
+    </p>
+</footer>
+
+</body>
+
+</html>

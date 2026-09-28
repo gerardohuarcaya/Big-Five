@@ -1,0 +1,107 @@
+body{
+    margin:0;
+    padding:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#eef3f8;
+}
+
+header{
+    background:#2563eb;
+    color:white;
+    text-align:center;
+    padding:40px;
+}
+
+#titulo{
+    font-size:45px;
+    margin-bottom:10px;
+}
+
+.descripcion{
+    font-size:18px;
+}
+
+.contenedor{
+    width:80%;
+    margin:auto;
+    margin-top:30px;
+    margin-bottom:40px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:25px;
+    margin-bottom:30px;
+    box-shadow:0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.pregunta h2{
+    color:#2563eb;
+}
+
+.rasgo{
+    color:gray;
+    font-style:italic;
+    margin-bottom:20px;
+}
+
+input[type=text],
+input[type=email]{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    margin-top:8px;
+    margin-bottom:20px;
+    box-sizing:border-box;
+}
+
+label{
+    display:block;
+    margin:8px 0;
+}
+
+.botones{
+    text-align:center;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    padding:15px 40px;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+    transform:scale(1.05);
+}
+
+.barra{
+    width:100%;
+    height:20px;
+    background:#ddd;
+    border-radius:10px;
+    margin:20px 0;
+}
+
+#avance{
+    width:0%;
+    height:100%;
+    background:#2563eb;
+    border-radius:10px;
+    transition:.3s;
+}
+
+
+@media(max-width:768px){
+    .contenedor{
+        width:95%;
+    }
+
+}
