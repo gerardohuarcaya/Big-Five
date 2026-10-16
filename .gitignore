@@ -1,0 +1,4 @@
+.env
+__pycache__/
+usuarios.json
+usuarios.JSON
